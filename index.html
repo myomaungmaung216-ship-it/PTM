@@ -38,16 +38,31 @@
     .wrong {
       background-color: red;
     }
+    .buttons {
+      margin-top: 20px;
+      display: none;
+    }
+    .buttons button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <h1>Pattern Memory</h1>
   <p id="message">Watch carefully...</p>
   <div class="grid" id="grid"></div>
+  <div class="buttons" id="buttons">
+    <button onclick="replay()">Replay</button>
+    <button onclick="quit()">No</button>
+  </div>
 
   <script>
     const grid = document.getElementById("grid");
     const message = document.getElementById("message");
+    const buttons = document.getElementById("buttons");
     const size = 25; // 5x5 = 25 cells
     const cells = [];
     let pattern = [];
@@ -102,9 +117,8 @@
         setTimeout(() => e.target.classList.remove("correct"), 300);
       } else {
         e.target.classList.add("wrong");
-        message.textContent = "Wrong! Try again.";
-        setTimeout(() => e.target.classList.remove("wrong"), 500);
-        userClicks = [];
+        message.textContent = "Game Over!";
+        buttons.style.display = "block"; // show replay/no buttons
         return;
       }
 
@@ -116,9 +130,21 @@
       }
     }
 
+    // replay function
+    function replay() {
+      buttons.style.display = "none";
+      generatePattern();
+    }
+
+    // quit function
+    function quit() {
+      message.textContent = "Thanks for playing!";
+      grid.style.display = "none";
+      buttons.style.display = "none";
+    }
+
     // start game
     generatePattern();
   </script>
 </body>
 </html>
-
