@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pattern Memory Game</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 70px);
+      grid-template-rows: repeat(5, 70px);
+      gap: 10px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    .cell {
+      width: 70px;
+      height: 70px;
+      background-color: #222;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .highlight {
+      background-color: orange;
+    }
+    .correct {
+      background-color: green;
+    }
+    .wrong {
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pattern Memory</h1>
+  <p id="message">Watch carefully...</p>
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const grid = document.getElementById("grid");
+    const message = document.getElementById("message");
+    const size = 25; // 5x5 = 25 cells
+    const cells = [];
+    let pattern = [];
+    let userClicks = [];
+
+    // create 25 cells
+    for (let i = 0; i < size; i++) {
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      cell.dataset.index = i;
+      cell.addEventListener("click", handleClick);
+      grid.appendChild(cell);
+      cells.push(cell);
+    }
+
+    // generate random 6-cell pattern
+    function generatePattern() {
+      pattern = [];
+      while (pattern.length < 6) {
+        let r = Math.floor(Math.random() * size);
+        if (!pattern.includes(r)) {
+          pattern.push(r);
+        }
+      }
+      showPattern();
+    }
+
+    // show pattern briefly
+    function showPattern() {
+      message.textContent = "Watch carefully...";
+      pattern.forEach((idx, i) => {
+        setTimeout(() => {
+          cells[idx].classList.add("highlight");
+          setTimeout(() => {
+            cells[idx].classList.remove("highlight");
+            if (i === pattern.length - 1) {
+              message.textContent = "Now repeat the pattern!";
+              userClicks = [];
+            }
+          }, 500);
+        }, i * 1000);
+      });
+    }
+
+    // handle user clicks
+    function handleClick(e) {
+      const idx = parseInt(e.target.dataset.index);
+      userClicks.push(idx);
+
+      if (pattern[userClicks.length - 1] === idx) {
+        e.target.classList.add("correct");
+        setTimeout(() => e.target.classList.remove("correct"), 300);
+      } else {
+        e.target.classList.add("wrong");
+        message.textContent = "Wrong! Try again.";
+        setTimeout(() => e.target.classList.remove("wrong"), 500);
+        userClicks = [];
+        return;
+      }
+
+      if (userClicks.length === pattern.length) {
+        message.textContent = "Well done! Generating new pattern...";
+        setTimeout(() => {
+          generatePattern();
+        }, 1500);
+      }
+    }
+
+    // start game
+    generatePattern();
+  </script>
+</body>
+</html>
+
